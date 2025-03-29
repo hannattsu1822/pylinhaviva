@@ -1,0 +1,26 @@
+/* Cores temáticas para Subestação (azul + vermelho) */
+h2 {
+    color: white;
+    background-color: #D32F2F;
+    padding: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Tabelas (exemplo) */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th {
+    background-color: #005F87;
+    color: white;
+}
+
+td, th {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}

@@ -1,0 +1,49 @@
+{% extends "transformadores/base_trafo.html" %}
+
+{% block title %}Transformadores{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transformadores/main.css') }}">
+{% endblock %}
+
+{% block content %}
+<header class="content-header">
+    <h4><i class="bi bi-lightning-charge"></i> Transformadores</h4>
+    <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="separator">/</span>
+        <span class="active">Transformadores</span>
+    </div>
+</header>
+
+<div class="content-body">
+    <div class="cards-grid">
+        <!-- Card Upload -->
+        <a href="{{ url_for('main.upload_trafo') }}" class="dashboard-card upload-card">
+            <div class="card-icon">
+                <i class="bi bi-cloud-upload"></i>
+            </div>
+            <h3>Upload de Dados</h3>
+            <p>Envie arquivos de transformadores</p>
+        </a>
+        
+        <!-- Card Inspeção -->
+        <a href="{{ url_for('main.inspecao_trafo') }}" class="dashboard-card inspecao-card">
+            <div class="card-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </div>
+            <h3>Nova Inspeção</h3>
+            <p>Registre uma nova inspeção</p>
+        </a>
+        
+        <!-- Card Filtrar -->
+        <a href="{{ url_for('main.filtrar_trafos') }}" class="dashboard-card filtrar-card">
+            <div class="card-icon">
+                <i class="bi bi-funnel"></i>
+            </div>
+            <h3>Filtrar Inspeções</h3>
+            <p>Consulte inspeções anteriores</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

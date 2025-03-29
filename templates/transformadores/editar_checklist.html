@@ -1,0 +1,114 @@
+{% extends "transformadores/base_trafo.html" %}
+
+{% block title %}Editar Checklist | Linha Viva{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transformadores/inspecao_trafo.css') }}">
+{% endblock %}
+
+{% block content %}
+<header class="content-header">
+    <h4><i class="bi bi-pencil-square"></i> Editar Inspeção</h4>
+    <div class="breadcrumb">
+        <a href="/dashboard">Dashboard</a>
+        <span class="separator">/</span>
+        <a href="{{ url_for('main.transformadores') }}">Transformadores</a>
+        <span class="separator">/</span>
+        <a href="{{ url_for('main.filtrar_trafos') }}">Filtrar Inspeções</a>
+        <span class="separator">/</span>
+        <span class="active">Editar</span>
+    </div>
+</header>
+
+<div class="content-body">
+    <div class="inspection-form">
+        <form method="POST" action="{{ url_for('main.editar_checklist', id=checklist.id) }}" id="inspection-form">
+            <!-- Seção Identificação -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Identificação</h2>
+                <div class="form-group">
+                    <label class="form-label">Número de Série*</label>
+                    <select class="form-control" name="numero_serie" required>
+                        <option value="">Selecione o transformador...</option>
+                        {% for trafo in transformadores %}
+                            <option value="{{ trafo.numero_serie }}" {% if trafo.numero_serie == checklist.numero_serie %}selected{% endif %}>
+                                {{ trafo.numero_serie }} - {{ trafo.marca or '' }} {{ trafo.potencia or '' }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Seção Histórico -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-history"></i> Histórico do Equipamento</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Data de Fabricação</label>
+                    <input type="date" class="form-control" name="data_fabricacao" 
+                           value="{{ checklist.data_fabricacao.strftime('%Y-%m-%d') if checklist.data_fabricacao else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">O transformador foi reformado?</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="reformado" value="Sim" {% if checklist.reformado %}checked{% endif %}>
+                            <span class="radiomark"></span>
+                            <span>Sim</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="reformado" value="Não" {% if not checklist.reformado %}checked{% endif %}>
+                            <span class="radiomark"></span>
+                            <span>Não</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="data-reforma-group" {% if not checklist.reformado %}style="display: none;"{% endif %}>
+                    <label class="form-label">Data da Reforma</label>
+                    <input type="date" class="form-control" name="data_reforma" 
+                           value="{{ checklist.data_reforma.strftime('%Y-%m-%d') if checklist.data_reforma else '' }}">
+                </div>
+            </div>
+
+            <!-- Seção Tanque -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-oil-can"></i> Estado do Tanque</h2>
+                <p class="section-description">Selecione todos os itens que se aplicam:</p>
+                
+                <div class="checkbox-grid">
+                    {% set tanque_items = checklist.detalhes_tanque.split(', ') if checklist.detalhes_tanque else [] %}
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Normal" {% if 'Normal' in tanque_items %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        <span>Normal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Vestígios de Óleo" {% if 'Vestígios de Óleo' in tanque_items %}checked{% endif %}>
+                        <span class="checkmark"></span>
+                        <span>Vestígios de Óleo</span>
+                    </label>
+                    <!-- Outros checkboxes do tanque... -->
+                </div>
+            </div>
+
+            <!-- Outras seções do formulário (similar à inspecao_trafo.html) -->
+            
+            <!-- Botão de envio -->
+            <div class="form-actions">
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-save"></i> Atualizar Inspeção
+                </button>
+                <a href="{{ url_for('main.visualizar_checklist', id=checklist.id) }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Lógica JavaScript similar à inspecao_trafo.html
+</script>
+{% endblock %}

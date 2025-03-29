@@ -1,0 +1,528 @@
+{% extends "transformadores/base_trafo.html" %}
+
+{% block title %}Inspeção de Transformador | Linha Viva{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transformadores/inspecao_trafo.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="inspection-page">
+    <div class="page-header">
+        <h1><i class="fas fa-transformer"></i> Inspeção de Transformador</h1>
+        <nav class="breadcrumb">
+            <a href="{{ url_for('main.transformadores') }}">Transformadores</a>
+            <span class="divider">/</span>
+            <span class="current">Nova Inspeção</span>
+        </nav>
+    </div>
+
+    <div class="inspection-form">
+        {% if not transformadores %}
+        <div class="no-transformers-available">
+            <h3><i class="fas fa-exclamation-triangle"></i> Todos os transformadores já foram inspecionados</h3>
+            <p>Não há transformadores disponíveis para nova inspeção no momento.</p>
+            <a href="{{ url_for('main.transformadores') }}" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Voltar para a lista
+            </a>
+        </div>
+        {% else %}
+        <form method="POST" action="{{ url_for('main.inspecao_trafo') }}" id="inspection-form">
+            <!-- Seção Identificação -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-info-circle"></i> Identificação</h2>
+                <div class="form-group">
+                    <label class="form-label">Número de Série*</label>
+                    <select class="form-control" name="numero_serie" required>
+                        <option value="">Selecione o transformador...</option>
+                        {% for trafo in transformadores %}
+                            <option value="{{ trafo.numero_serie }}">{{ trafo.numero_serie }} - {{ trafo.marca or '' }} {{ trafo.potencia or '' }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Seção Histórico do Equipamento -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-history"></i> Histórico do Equipamento</h2>
+                
+                <div class="form-group">
+                    <label class="form-label">Data de Fabricação</label>
+                    <input type="date" class="form-control" name="data_fabricacao" 
+                           pattern="\d{4}-\d{2}-\d{2}">
+                    <small class="form-text text-muted">Formato: AAAA-MM-DD</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">O transformador foi reformado?*</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="reformado" value="Sim" id="reformado-sim">
+                            <span class="radiomark"></span>
+                            <span>Sim</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="reformado" value="Não" checked>
+                            <span class="radiomark"></span>
+                            <span>Não</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="data-reforma-group" style="display: none;">
+                    <label class="form-label">Data da Reforma*</label>
+                    <input type="date" class="form-control" name="data_reforma" 
+                           pattern="\d{4}-\d{2}-\d{2}">
+                    <small class="form-text text-muted">Formato: AAAA-MM-DD</small>
+                </div>
+            </div>
+
+            <!-- Seção Tanque -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-oil-can"></i> Estado do Tanque</h2>
+                <p class="section-description">Selecione todos os itens que se aplicam:</p>
+                
+                <div class="checkbox-grid">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Normal">
+                        <span class="checkmark"></span>
+                        <span>Normal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Vestígios de Óleo">
+                        <span class="checkmark"></span>
+                        <span>Vestígios de Óleo</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Queimado/Pintura Desgastada">
+                        <span class="checkmark"></span>
+                        <span>Queimado/Desgaste</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Vestígios de Vazamento de Óleo">
+                        <span class="checkmark"></span>
+                        <span>Vazamento de Óleo</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Plaqueta de Identificação Ilegível">
+                        <span class="checkmark"></span>
+                        <span>Plaqueta Ilegível</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Furado">
+                        <span class="checkmark"></span>
+                        <span>Furado</span>
+                    </label>
+                    <label class="checkbox-option" id="corrosao-option">
+                        <input type="checkbox" name="estado_tanque" value="COM CORROSÃO">
+                        <span class="checkmark"></span>
+                        <span>Com Corrosão</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="estado_tanque" value="Outros">
+                        <span class="checkmark"></span>
+                        <span>Outros</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Grau de Corrosão -->
+            <div class="form-section" id="corrosion-degree" style="display: none;">
+                <h3 class="subsection-title">Grau de Corrosão</h3>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="corrosao_grau" value="PEQUENAS">
+                        <span class="radiomark"></span>
+                        <span>Pequenas</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="corrosao_grau" value="REGULARES">
+                        <span class="radiomark"></span>
+                        <span>Regulares</span>
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="corrosao_grau" value="CRÍTICAS">
+                        <span class="radiomark"></span>
+                        <span>Críticas</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Buchas Primárias -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-plug"></i> Buchas Primárias</h2>
+                <p class="section-description">Selecione todos os itens que se aplicam:</p>
+                
+                <div class="checkbox-grid">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Normal">
+                        <span class="checkmark"></span>
+                        <span>Normal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Trincada">
+                        <span class="checkmark"></span>
+                        <span>Trincada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Quebrada">
+                        <span class="checkmark"></span>
+                        <span>Quebrada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Folgada">
+                        <span class="checkmark"></span>
+                        <span>Folgada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Vedações Ressecadas">
+                        <span class="checkmark"></span>
+                        <span>Vedações Ressecadas</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Com sinais de Descargas Atmosféricas">
+                        <span class="checkmark"></span>
+                        <span>Descargas Atmosféricas</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_primarias" value="Outros">
+                        <span class="checkmark"></span>
+                        <span>Outros</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Buchas Secundárias -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-plug"></i> Buchas Secundárias</h2>
+                <p class="section-description">Selecione todos os itens que se aplicam:</p>
+                
+                <div class="checkbox-grid">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Normal">
+                        <span class="checkmark"></span>
+                        <span>Normal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Trincada">
+                        <span class="checkmark"></span>
+                        <span>Trincada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Quebrada">
+                        <span class="checkmark"></span>
+                        <span>Quebrada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Folgada">
+                        <span class="checkmark"></span>
+                        <span>Folgada</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Vedações Ressecadas">
+                        <span class="checkmark"></span>
+                        <span>Vedações Ressecadas</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Com sinais de Descargas Atmosféricas">
+                        <span class="checkmark"></span>
+                        <span>Descargas Atmosféricas</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="buchas_secundarias" value="Outros">
+                        <span class="checkmark"></span>
+                        <span>Outros</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Conectores -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-bolt"></i> Conectores</h2>
+                <p class="section-description">Selecione todos os itens que se aplicam:</p>
+                
+                <div class="checkbox-grid">
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Normal">
+                        <span class="checkmark"></span>
+                        <span>Normal</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Com Sinais de Descargas Atmosféricas">
+                        <span class="checkmark"></span>
+                        <span>Sinais de Descargas</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Trincado">
+                        <span class="checkmark"></span>
+                        <span>Trincado</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Faltando Parafusos">
+                        <span class="checkmark"></span>
+                        <span>Faltando Parafusos</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Parafusos Enferrujados">
+                        <span class="checkmark"></span>
+                        <span>Parafusos Enferrujados</span>
+                    </label>
+                    <label class="checkbox-option">
+                        <input type="checkbox" name="conectores" value="Outros">
+                        <span class="checkmark"></span>
+                        <span>Outros</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Ensaios de Continuidade -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-tasks"></i> Ensaios de Continuidade</h2>
+                <p class="section-description">Selecione o estado de cada bobina:</p>
+                
+                <div class="continuity-tests">
+                    <div class="test-group">
+                        <h3 class="test-title">Bobina 1</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_i" value="Em Curto Circuito" required>
+                                <span class="radiomark"></span>
+                                <span>Em Curto Circuito</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_i" value="Em Aberto">
+                                <span class="radiomark"></span>
+                                <span>Em Aberto</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_i" value="Normal">
+                                <span class="radiomark"></span>
+                                <span>Normal</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="test-group">
+                        <h3 class="test-title">Bobina 2</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_ii" value="Em Curto Circuito" required>
+                                <span class="radiomark"></span>
+                                <span>Em Curto Circuito</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_ii" value="Em Aberto">
+                                <span class="radiomark"></span>
+                                <span>Em Aberto</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_ii" value="Normal">
+                                <span class="radiomark"></span>
+                                <span>Normal</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="test-group">
+                        <h3 class="test-title">Bobina 3</h3>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_iii" value="Em Curto Circuito" required>
+                                <span class="radiomark"></span>
+                                <span>Em Curto Circuito</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_iii" value="Em Aberto">
+                                <span class="radiomark"></span>
+                                <span>Em Aberto</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="avaliacao_bobina_iii" value="Normal">
+                                <span class="radiomark"></span>
+                                <span>Normal</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Avaliação Técnica -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-clipboard-check"></i> Avaliação Técnica</h2>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Conclusão*</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="conclusao" value="Queimado" required>
+                                    <span class="radiomark"></span>
+                                    <span>Queimado</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="conclusao" value="Normal">
+                                    <span class="radiomark"></span>
+                                    <span>Normal</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Transformador Destinado*</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="transformador_destinado" value="A Sucata" required>
+                                    <span class="radiomark"></span>
+                                    <span>A Sucata</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="transformador_destinado" value="A Estoque">
+                                    <span class="radiomark"></span>
+                                    <span>A Estoque</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="transformador_destinado" value="Manutenção">
+                                    <span class="radiomark"></span>
+                                    <span>Manutenção</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Observações -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-comment-alt"></i> Observações e Sugestões</h2>
+                <div class="form-group">
+                    <textarea class="form-control" name="observacoes" rows="4" placeholder="Digite suas observações..."></textarea>
+                </div>
+            </div>
+
+            <!-- Seção Responsáveis -->
+            <div class="form-section">
+                <h2 class="section-title"><i class="fas fa-user-tie"></i> Responsáveis</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Responsável Técnico</label>
+                            <input type="text" class="form-control" value="{{ current_user.nome }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Matrícula</label>
+                            <input type="text" class="form-control" value="{{ current_user.matricula }}" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Supervisor Técnico</label>
+                            <input type="text" class="form-control" value="Eng. Alisson" readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Data</label>
+                            <input type="text" class="form-control" value="{{ data_atual }}" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botão de envio -->
+            <div class="form-actions">
+                <button type="submit" class="submit-button">
+                    <i class="fas fa-save"></i> Salvar Inspeção
+                </button>
+            </div>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Mostrar/ocultar grau de corrosão
+    const corrosaoOption = document.querySelector('input[name="estado_tanque"][value="COM CORROSÃO"]');
+    const corrosionDegree = document.getElementById('corrosion-degree');
+    
+    if (corrosaoOption) {
+        corrosaoOption.addEventListener('change', function() {
+            corrosionDegree.style.display = this.checked ? 'block' : 'none';
+            if (!this.checked) {
+                document.querySelectorAll('input[name="corrosao_grau"]').forEach(radio => {
+                    radio.checked = false;
+                });
+            }
+        });
+    }
+
+    // Mostrar/ocultar data de reforma
+    const reformadoRadios = document.querySelectorAll('input[name="reformado"]');
+    const dataReformaGroup = document.getElementById('data-reforma-group');
+    
+    reformadoRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            dataReformaGroup.style.display = this.value === 'Sim' ? 'block' : 'none';
+            if (this.value !== 'Sim') {
+                document.querySelector('input[name="data_reforma"]').value = '';
+            }
+        });
+    });
+
+    // Validação antes de enviar o formulário
+    document.getElementById('inspection-form').addEventListener('submit', function(e) {
+        // Verificar se corrosão foi selecionada mas não tem grau definido
+        const corrosaoChecked = document.querySelector('input[name="estado_tanque"][value="COM CORROSÃO"]')?.checked;
+        const grauSelecionado = document.querySelector('input[name="corrosao_grau"]:checked');
+        
+        if (corrosaoChecked && !grauSelecionado) {
+            e.preventDefault();
+            alert('Por favor, selecione o grau de corrosão');
+            document.getElementById('corrosion-degree').scrollIntoView({ behavior: 'smooth' });
+            return false;
+        }
+
+        // Verificar se reformado=Sim mas não tem data de reforma
+        const reformadoSim = document.querySelector('input[name="reformado"][value="Sim"]')?.checked;
+        const dataReforma = document.querySelector('input[name="data_reforma"]')?.value;
+        
+        if (reformadoSim && !dataReforma) {
+            e.preventDefault();
+            alert('Por favor, informe a data da reforma');
+            document.getElementById('data-reforma-group').scrollIntoView({ behavior: 'smooth' });
+            return false;
+        }
+
+        // Verificar se pelo menos uma opção foi selecionada em cada seção de checkbox
+        const checkboxSections = document.querySelectorAll('.checkbox-grid');
+        let isValid = true;
+        
+        checkboxSections.forEach(section => {
+            const checkboxes = section.querySelectorAll('input[type="checkbox"]');
+            const checked = Array.from(checkboxes).some(cb => cb.checked);
+            
+            if (!checked) {
+                isValid = false;
+                section.style.border = '1px solid red';
+                section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else {
+                section.style.border = '';
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Por favor, selecione pelo menos uma opção em cada seção');
+            return false;
+        }
+
+        return true;
+    });
+});
+</script>
+{% endblock %}

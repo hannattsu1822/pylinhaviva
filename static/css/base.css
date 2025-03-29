@@ -1,0 +1,55 @@
+/* Fonte e cor de fundo padrão */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Botões */
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #005F87;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #4A4A4A;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #D32F2F;
+    color: white;
+}
+
+/* Navbar (se estiver usando) */
+.navbar {
+    background-color: #005F87 !important;
+    padding: 10px 0;
+}
+
+.navbar-brand, .nav-link {
+    color: white !important;
+}
+
+.nav-link:hover {
+    color: #FFD700 !important;
+}

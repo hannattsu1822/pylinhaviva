@@ -1,0 +1,144 @@
+:root {
+    --primary: #FF6B00;
+    --secondary: #1E88E5;
+    --accent: #8E24AA;
+    --light: #F8F9FA;
+    --dark: #212529;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    background-color: #FAFAFA;
+}
+
+.sidebar {
+    width: 280px;
+    background: white;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 25px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 25px;
+}
+
+.user-info h5 {
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.matricula-badge {
+    background: rgba(255, 107, 0, 0.1);
+    color: var(--primary);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    display: inline-block;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: #495057;
+    text-decoration: none;
+    transition: all 0.3s;
+    border-left: 3px solid transparent;
+}
+
+.nav-item.active {
+    background: rgba(255, 107, 0, 0.05);
+    color: var(--primary);
+    border-left-color: var(--primary);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-header {
+    background: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.content-body {
+    flex: 1;
+    padding: 30px;
+    background-color: #FAFAFA;
+}
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--dark);
+    text-align: center;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: white;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-card .card-icon {
+    background-color: var(--secondary);
+}
+
+.inspecao-card .card-icon {
+    background-color: var(--accent);
+}
+
+.filtrar-card .card-icon {
+    background-color: #6C757D;
+}
+
+.dashboard-card h3 {
+    margin: 15px 0 10px;
+    font-size: 1.4rem;
+}
+
+.dashboard-card p {
+    color: #6C757D;
+    font-size: 0.95rem;
+}

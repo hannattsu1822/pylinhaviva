@@ -1,0 +1,162 @@
+{% extends "transformadores/base_trafo.html" %}
+
+{% block title %}Importar Transformadores | Linka Viva{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transformadores/upload_trafo.css') }}">
+{% endblock %}
+
+{% block content %}
+<header class="content-header">
+    <div>
+        <h4>
+            <i class="bi bi-database-add"></i>
+            Importar Transformadores
+        </h4>
+    </div>
+</header>
+
+<div class="content-body">
+    <!-- Mensagens Flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <i class="bi bi-{% if category == 'success' %}check-circle{% else %}exclamation-triangle{% endif %}"></i>
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="upload-container">
+        <div class="upload-card">
+            <div class="upload-header">
+                <div class="upload-icon">
+                    <i class="bi bi-file-earmark-excel"></i>
+                </div>
+                <h5>Importar Dados de Transformadores</h5>
+                <p>Selecione um arquivo Excel/CSV com os dados dos transformadores</p>
+            </div>
+            
+            <form method="post" enctype="multipart/form-data" action="{{ url_for('main.upload_trafo') }}">
+                <div class="file-drop-area" id="dropArea">
+                    <input type="file" id="fileInput" name="arquivo" class="file-input" accept=".xlsx,.xls,.csv" required>
+                    <div class="drop-content">
+                        <i class="bi bi-cloud-arrow-up"></i>
+                        <p>Arraste e solte seu arquivo aqui</p>
+                        <small>ou clique para selecionar</small>
+                    </div>
+                    <div class="file-preview" id="filePreview"></div>
+                </div>
+                
+                <div class="form-actions">
+                    <a href="{{ url_for('main.transformadores') }}" class="btn-back">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    <button type="submit" class="btn-upload">
+                        <i class="bi bi-upload"></i> Importar Dados
+                    </button>
+                </div>
+            </form>
+            
+            <div class="upload-info">
+                <h6><i class="bi bi-info-circle"></i> Estrutura do Arquivo:</h6>
+                <p>O arquivo deve conter as seguintes colunas (nomes exatos):</p>
+                <ul>
+                    <li><strong>item</strong> - Identificação do item (obrigatório)</li>
+                    <li><strong>marca</strong> - Marca do transformador</li>
+                    <li><strong>potencia</strong> - Potência em kVA</li>
+                    <li><strong>numero_fases</strong> - Número de fases</li>
+                    <li><strong>numero_serie</strong> - Número de série (único)</li>
+                    <li><strong>local_retirada</strong> - Local de retirada</li>
+                    <li><strong>regional</strong> - Regional</li>
+                    <li><strong>motivo_desativacao</strong> - Motivo da desativação</li>
+                    <li><strong>data_entrada_almoxarifado</strong> - Data no formato AAAA-MM-DD</li>
+                </ul>
+                <div class="sample-download">
+                    <a href="{{ url_for('static', filename='samples/modelo_transformadores.xlsx') }}" class="btn-sample">
+                        <i class="bi bi-download"></i> Baixar Modelo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dropArea = document.getElementById('dropArea');
+    const fileInput = document.getElementById('fileInput');
+    const filePreview = document.getElementById('filePreview');
+
+    // Handle drag and drop events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+        dropArea.classList.add('highlight');
+    }
+
+    function unhighlight() {
+        dropArea.classList.remove('highlight');
+    }
+
+    // Handle file selection
+    dropArea.addEventListener('drop', handleDrop, false);
+    fileInput.addEventListener('change', handleFiles, false);
+
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        handleFiles();
+    }
+
+    function handleFiles() {
+        filePreview.innerHTML = '';
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <i class="bi bi-file-earmark-excel"></i>
+                <div>
+                    <span>${file.name}</span>
+                    <small>${formatFileSize(file.size)}</small>
+                </div>
+                <i class="bi bi-check-circle-fill"></i>
+            `;
+            filePreview.appendChild(fileItem);
+        }
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+});
+</script>
+{% endblock %}
+{% endblock %}

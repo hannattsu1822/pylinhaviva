@@ -1,0 +1,363 @@
+:root {
+    --primary: #FF6B00;
+    --primary-dark: #CC5600;
+    --text: #333333;
+    --light-gray: #f5f5f5;
+    --medium-gray: #e0e0e0;
+    --dark-gray: #757575;
+    --white: #ffffff;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --border-radius: 6px;
+    --spacing: 1rem;
+}
+
+.checklist-page {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.breadcrumb {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--dark-gray);
+    margin-top: 10px;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.breadcrumb .divider {
+    color: var(--medium-gray);
+}
+
+.checklist-card {
+    background: var(--white);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.checklist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--light-gray);
+}
+
+.header-left h2 {
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+.serial-number {
+    color: var(--dark-gray);
+    font-size: 16px;
+}
+
+.header-right {
+    text-align: right;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.status-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: var(--success);
+}
+
+.status-warning {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: var(--danger);
+}
+
+.form-date {
+    color: var(--dark-gray);
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.checklist-sections {
+    margin-top: 20px;
+}
+
+.checklist-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    color: var(--text);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-title i {
+    color: var(--primary);
+}
+
+.section-content {
+    padding-left: 30px;
+}
+
+.info-row {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.info-label {
+    font-weight: 500;
+    width: 180px;
+    color: var(--text);
+}
+
+.info-value {
+    color: var(--dark-gray);
+}
+
+.section-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding-left: 30px;
+}
+
+.info-card {
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    border-left: 4px solid var(--primary);
+}
+
+.card-title {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-title i {
+    color: var(--primary);
+}
+
+.card-value {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+.card-detail {
+    font-size: 14px;
+    color: var(--dark-gray);
+    font-style: italic;
+}
+
+.test-results {
+    padding-left: 30px;
+}
+
+.test-item {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.test-label {
+    font-weight: 500;
+    width: 100px;
+    color: var(--text);
+}
+
+.test-value {
+    font-weight: 500;
+}
+
+.text-success {
+    color: var(--success);
+}
+
+.text-danger {
+    color: var(--danger);
+}
+
+.conclusion-content {
+    padding-left: 30px;
+}
+
+.conclusion-row {
+    margin-bottom: 15px;
+}
+
+.conclusion-label {
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.conclusion-value {
+    color: var(--dark-gray);
+}
+
+.conclusion-notes {
+    background: var(--light-gray);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    color: var(--text);
+    line-height: 1.5;
+}
+
+.responsible-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding-left: 30px;
+}
+
+.responsible-card {
+    background: var(--light-gray);
+    border-radius: var(--border-radius);
+    padding: 15px;
+}
+
+.responsible-name {
+    font-size: 16px;
+    color: var(--text);
+    margin-bottom: 5px;
+}
+
+.responsible-id {
+    font-size: 14px;
+    color: var(--dark-gray);
+}
+
+.checklist-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--light-gray);
+}
+
+.no-checklist {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.no-checklist i {
+    font-size: 50px;
+    color: var(--danger);
+    margin-bottom: 20px;
+}
+
+.no-checklist h3 {
+    color: var(--danger);
+    margin-bottom: 10px;
+}
+
+.no-checklist p {
+    color: var(--dark-gray);
+    margin-bottom: 20px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+}
+
+.btn-primary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255,107,0,0.3);
+}
+
+.btn-secondary {
+    background: var(--medium-gray);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: var(--dark-gray);
+    color: var(--white);
+}
+
+@media (max-width: 768px) {
+    .checklist-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .header-right {
+        text-align: left;
+        width: 100%;
+    }
+    
+    .section-grid, .responsible-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-content, .test-results, .conclusion-content {
+        padding-left: 15px;
+    }
+    
+    .info-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .info-label {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .checklist-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
